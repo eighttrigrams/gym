@@ -86,6 +86,10 @@
 (defn get-linear-velocity [id]
   (.x (.getLinearVelocity (id @bodies))))
 
+(defn get-position [id]
+  [(.getTranslationX (.getTransform (id @bodies)))
+   (.getTranslationY (.getTransform (id @bodies)))])
+
 (defn set-motor-speed [joint-id speed]
   (.setMotorSpeed (joint-id @joints) speed))
 

@@ -1,0 +1,1 @@
+{:deps {org.dyn4j/dyn4j {:mvn/version "4.0.1"}}}

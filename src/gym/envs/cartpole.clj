@@ -3,13 +3,13 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.125)
+(def MAX-ANGLE 0.20)
 
-(def SHIP-SPEED 7.5)
+(def SHIP-SPEED 3.5)
 
 (defn spawn [state]
   (create-body:rectangle [[0 104] [4 4]] :tip)
-  (create-body:rectangle [[0 0] [4 200]] :pole)
+  (create-body:rectangle [[0 0] [1 200]] :pole)
   (create-joint:weld :tip-rod :pole :tip [0.0 102.0])
   (translate-bodies [:pole :tip] [200 -194])
 

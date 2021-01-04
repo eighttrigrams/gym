@@ -70,7 +70,7 @@
                                (Vector2. x2 y2))]
     (.setCollisionAllowed joint false)
     (.setMotorEnabled joint true)
-    (.setMaximumMotorForce joint 32000.0)
+    (.setMaximumMotorForce joint 16000.0)
     (.addJoint world joint)
     (swap! joints assoc id joint)))
 

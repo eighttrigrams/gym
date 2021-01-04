@@ -39,8 +39,8 @@
            :rotation   (- (.getRotationAngle (.getTransform body)))}))
       (vals @bodies)))))
 
-(defn step-in-ms [tick-in-ms]
-  (.step world tick-in-ms))
+(defn step-in-ms []
+  (.step world 1))
 
 (defn create-joint:revolute [id body1-id body2-id [x y]]
   (let [joint (RevoluteJoint. (body1-id @bodies)
@@ -70,7 +70,7 @@
                                (Vector2. x2 y2))]
     (.setCollisionAllowed joint false)
     (.setMotorEnabled joint true)
-    (.setMaximumMotorForce joint 12000.0)
+    (.setMaximumMotorForce joint 32000.0)
     (.addJoint world joint)
     (swap! joints assoc id joint)))
 

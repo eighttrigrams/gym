@@ -3,16 +3,15 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.125)
+(def MAX-ANGLE 0.55)
 
-(def SHIP-SPEED 10)
+(def SHIP-SPEED 7.5)
 
 (defn spawn [state]
   (create-body:rectangle [[0 104] [4 4]] :tip)
   (create-body:rectangle [[0 0] [4 200]] :pole)
   (create-joint:weld :tip-rod :pole :tip [0.0 102.0])
   (translate-bodies [:pole :tip] [200 -194])
-  (set-linear-velocity :tip [30.0 0.0])
 
   (create-body:rectangle [[-150.0 -50] [25 100]] :pillar-left :infinite)
   (create-body:rectangle [[150.0 -50] [25 100]] :pillar-right :infinite)
@@ -24,15 +23,16 @@
   (create-body:rectangle [[0 0] [300 2.0]] :rail)
 
   (create-body:rectangle [[0 0] [30 10]] :cart)
-  (create-body:rectangle [[-10 10] [10 8]] :constraint-left)
-  (create-body:rectangle [[10 10] [10 8]] :constraint-right)
+  (create-body:rectangle [[-6 6] [4 4]] :constraint-left)
+  (create-body:rectangle [[6 6] [4 4]] :constraint-right)
 
-  (create-joint:weld :weld1 :cart :constraint-left [-10.0 10.0])
-  (create-joint:weld :weld2 :cart :constraint-right [10.0 10.0])
+  (create-joint:weld :weld1 :cart :constraint-left [-6.0 6.0])
+  (create-joint:weld :weld2 :cart :constraint-right [6.0 6.0])
 
   (create-joint:prismatic :prismatic :rail :cart [-50.0 0.0] [50.0 0.0])
   (translate-bodies [:rail] [200 -299])
   (translate-bodies [:cart :constraint-left :constraint-right] [200 -304])
+
   state)
 
 (defn reset [state]
@@ -46,7 +46,8 @@
       (set-motor-speed :prismatic SHIP-SPEED)
       (or (.contains keys-pressed \d) (= cmd :right))
       (set-motor-speed :prismatic (- SHIP-SPEED))
-      :else (set-motor-speed :prismatic 0))
+      :else (set-motor-speed :prismatic 0)
+      )
     (let [state (-> state
                     (assoc-in [:observation :pole-rotation] (get-rotation :pole))
                     (assoc-in [:observation :tip-velocity] (get-linear-velocity :tip))
@@ -89,3 +90,10 @@
 
 (defn go [on-tick-observer on-end-observer initial-state]
   (gameloop/start (spawn initial-state) (on-tick-observable on-tick-observer on-end-observer)))
+
+(defn -main [& args]
+  (go (fn [{{done :done} :observation :as state}]
+        (if done
+          (assoc state :cmd :reset)
+          state)
+        ) identity {}))

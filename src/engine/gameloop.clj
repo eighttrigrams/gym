@@ -16,7 +16,7 @@
         physics-listener                 (partial ui/create-physics-listener
                                                   (fn [tick-in-ms]
                                                     (ph/step-in-ms)
-                                                    (if (= @step 25)
+                                                    (if (= @step 20)
                                                       (do
                                                         (reset! step 0)
                                                         (swap! state #(on-tick % @atom:keys tick-in-ms)))

@@ -5,13 +5,13 @@
 
 (def MAX-ANGLE 0.20)
 
-(def SHIP-SPEED 3.5)
+(def SHIP-SPEED 5.5)
 
 (defn spawn [state]
   (create-body:rectangle [[0 104] [4 4]] :tip)
-  (create-body:rectangle [[0 0] [1 200]] :pole)
+  (create-body:rectangle [[0 50] [1 100]] :pole)
   (create-joint:weld :tip-rod :pole :tip [0.0 102.0])
-  (translate-bodies [:pole :tip] [200 -194])
+  (translate-bodies [:pole :tip] [200 -294])
 
   (create-body:rectangle [[-150.0 -50] [25 100]] :pillar-left :infinite)
   (create-body:rectangle [[150.0 -50] [25 100]] :pillar-right :infinite)
@@ -23,11 +23,11 @@
   (create-body:rectangle [[0 0] [300 2.0]] :rail)
 
   (create-body:rectangle [[0 0] [30 10]] :cart)
-  (create-body:rectangle [[-6 6] [4 4]] :constraint-left)
-  (create-body:rectangle [[6 6] [4 4]] :constraint-right)
+  (create-body:rectangle [[-3 6] [4 4]] :constraint-left)
+  (create-body:rectangle [[3 6] [4 4]] :constraint-right)
 
-  (create-joint:weld :weld1 :cart :constraint-left [-6.0 6.0])
-  (create-joint:weld :weld2 :cart :constraint-right [6.0 6.0])
+  (create-joint:weld :weld1 :cart :constraint-left [-3.0 6.0])
+  (create-joint:weld :weld2 :cart :constraint-right [3.0 6.0])
 
   (create-joint:prismatic :prismatic :rail :cart [-50.0 0.0] [50.0 0.0])
   (translate-bodies [:rail] [200 -299])

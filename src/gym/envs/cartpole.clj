@@ -3,7 +3,7 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.55)
+(def MAX-ANGLE 0.125)
 
 (def SHIP-SPEED 7.5)
 

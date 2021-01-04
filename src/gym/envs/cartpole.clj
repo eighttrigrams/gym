@@ -53,8 +53,8 @@
                     (assoc-in [:observation :cart-position] (- (first (get-position :cart)) 200.0))
                     (assoc-in [:observation :cart-velocity] (get-linear-velocity :cart)))]
       (-> state
-          (cond-> (or (> (-> state :observation :rotation) MAX-ANGLE)
-                      (< (-> state :observation :rotation) (- MAX-ANGLE))) (assoc-in [:observation :done] true))
+          (cond-> (or (> (-> state :observation :pole-rotation) MAX-ANGLE)
+                      (< (-> state :observation :pole-rotation) (- MAX-ANGLE))) (assoc-in [:observation :done] true))
           (notify)))))
 
 ;; :cmd

@@ -1,2 +1,2 @@
 *.iml
-**/*/.cpcache
+.cpcache

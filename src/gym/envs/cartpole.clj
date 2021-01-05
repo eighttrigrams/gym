@@ -3,7 +3,7 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.15)
+(def MAX-ANGLE 0.20)
 
 (def CART-SPEED 25.75)
 
@@ -36,13 +36,14 @@
   (translate-bodies [:rail] [200 -299])
   (translate-bodies [:cart :constraint-left :constraint-right] [200 -304])
 
-  state)
+  (merge {:step 0
+          :max-angle MAX-ANGLE} state))
 
 (defn reset [state]
   (remove-bodies-and-joints)
   (spawn state))
 
-(defn handle-control [state cmd notify]
+(defn handle-control [{max-angle :max-angle :as state} cmd notify]
   (do
     (cond
       (= cmd :left)
@@ -50,28 +51,40 @@
       (= cmd :right)
       (set-motor-speed :prismatic (- CART-SPEED))
       (= cmd :stay) (set-motor-speed :prismatic 0))
-    (let [state (-> state
-                    (assoc-in [:observation :pole-rotation] (get-rotation :pole))
-                    (assoc-in [:observation :tip-velocity] (get-linear-velocity :tip))
-                    (assoc-in [:observation :cart-position] (- (first (get-position :cart)) 200.0))
-                    (assoc-in [:observation :cart-velocity] (get-linear-velocity :cart)))]
+    (let [state
+          (assoc state :observation
+                 [(- (first (get-position :cart)) 200.0)
+                  (get-rotation :pole)
+                  ;; TODO rename or make it return both components
+                  (get-linear-velocity :cart)
+                  (get-linear-velocity :tip)])]
       (-> state
-          (cond-> (or (> (-> state :observation :pole-rotation) MAX-ANGLE)
-                      (< (-> state :observation :pole-rotation) (- MAX-ANGLE))) (assoc-in [:observation :done] true))
+          (update :step inc)
+          (cond-> (or (> (-> state :observation second) max-angle)
+                      (< (-> state :observation second) (- max-angle)))
+            (assoc :done true))
           (notify)))))
 
+;; to be consumed by exercise:
+;;
+;; :step          - steps after last reset, beginning with 0
+;; :done          - when the rod reached a specified maximum angle
+;; :keys-pressed
+;; :observation
+;;   [cart-position
+;;    pole-rotation
+;;    cart-velocity - x component of the tip's velocity
+;;    tip-velocity] - x component of the tip's velocity
+;;
+;; to control the environment:
+;;
+;; :max-angle to override the default MAX-ANGLE
 ;; :cmd
 ;;   :end   - ends processing
 ;;   :reset - resets the environment
 ;;   :left  - moves the cart to the left
 ;;   :right - moves the cart to the right
-;;   :stay  - makes that cart stays on same motor speed
-;; :observation
-;;   :done     - when the rod reached a specified maximum angle
-;;   :cart-position
-;;   :pole-rotation
-;;   :cart-velocity - x component of the tip's velocity
-;;   :tip-velocity - x component of the tip's velocity
+;;
 (defn on-tick-observable [notify notify-end]
   (fn on-tick [{cmd :cmd finished :finished :as state} keys-pressed tick-in-ms]
     (if finished
@@ -81,7 +94,8 @@
         (do (reset state)
           (-> state
               (assoc :cmd nil)
-              (assoc-in [:observation :done] false)
+              (assoc :done false)
+              (assoc :step 0)
               (notify)))
         (= :end cmd)
         (do
@@ -99,7 +113,7 @@
 ;; dev mode - cart can be controlled manually
 
 (defn on-tick [{keys-pressed :keys-pressed
-                {done :done} :observation
+                done         :done
                 :as          state}]
   (if done
     (assoc state :cmd :reset)

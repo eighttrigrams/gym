@@ -70,7 +70,6 @@
                                (Vector2. x2 y2))]
     (.setCollisionAllowed joint false)
     (.setMotorEnabled joint true)
-    (.setMaximumMotorForce joint 200.0)
     (.addJoint world joint)
     (swap! joints assoc id joint)))
 
@@ -89,6 +88,9 @@
 (defn get-position [id]
   [(.getTranslationX (.getTransform (id @bodies)))
    (.getTranslationY (.getTransform (id @bodies)))])
+
+(defn set-maximum-motor-force [joint-id speed]
+  (.setMaximumMotorForce ^PrismaticJoint (joint-id @joints) speed))
 
 (defn set-motor-speed [joint-id speed]
   (.setMotorSpeed (joint-id @joints) speed))

@@ -3,9 +3,11 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.20)
+(def MAX-ANGLE 0.90)
 
-(def SHIP-SPEED 5.5)
+(def CART-SPEED 25.75)
+
+(def MOTOR-FORCE 2000.0)
 
 (defn spawn [state]
   (create-body:rectangle [[0 104] [4 4]] :tip)
@@ -30,6 +32,7 @@
   (create-joint:weld :weld2 :cart :constraint-right [3.0 6.0])
 
   (create-joint:prismatic :prismatic :rail :cart [-50.0 0.0] [50.0 0.0])
+  (set-maximum-motor-force :prismatic MOTOR-FORCE)
   (translate-bodies [:rail] [200 -299])
   (translate-bodies [:cart :constraint-left :constraint-right] [200 -304])
 
@@ -43,9 +46,9 @@
   (do
     (cond
       (or (.contains keys-pressed \a) (= cmd :left))
-      (set-motor-speed :prismatic SHIP-SPEED)
+      (set-motor-speed :prismatic CART-SPEED)
       (or (.contains keys-pressed \d) (= cmd :right))
-      (set-motor-speed :prismatic (- SHIP-SPEED))
+      (set-motor-speed :prismatic (- CART-SPEED))
       :else (set-motor-speed :prismatic 0)
       )
     (let [state (-> state

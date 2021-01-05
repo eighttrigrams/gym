@@ -3,7 +3,7 @@
     [engine.gameloop :as gameloop]
     [engine.physics :refer :all]))
 
-(def MAX-ANGLE 0.90)
+(def MAX-ANGLE 0.15)
 
 (def CART-SPEED 25.75)
 

@@ -42,15 +42,14 @@
   (remove-bodies-and-joints)
   (spawn state))
 
-(defn handle-control [state keys-pressed cmd notify]
+(defn handle-control [state cmd notify]
   (do
     (cond
-      (or (.contains keys-pressed \a) (= cmd :left))
+      (= cmd :left)
       (set-motor-speed :prismatic CART-SPEED)
-      (or (.contains keys-pressed \d) (= cmd :right))
+      (= cmd :right)
       (set-motor-speed :prismatic (- CART-SPEED))
-      :else (set-motor-speed :prismatic 0)
-      )
+      (= cmd :stay) (set-motor-speed :prismatic 0))
     (let [state (-> state
                     (assoc-in [:observation :pole-rotation] (get-rotation :pole))
                     (assoc-in [:observation :tip-velocity] (get-linear-velocity :tip))
@@ -64,8 +63,9 @@
 ;; :cmd
 ;;   :end   - ends processing
 ;;   :reset - resets the environment
-;;   :left  - moves the ship to the left
-;;   :right - moves the ship to the right
+;;   :left  - moves the cart to the left
+;;   :right - moves the cart to the right
+;;   :stay  - makes that cart stays on same motor speed
 ;; :observation
 ;;   :done     - when the rod reached a specified maximum angle
 ;;   :cart-position
@@ -89,14 +89,25 @@
               (assoc :finished true)
               (notify-end)))
         :else
-        (handle-control state keys-pressed cmd notify)))))
+        (handle-control (assoc state :keys-pressed keys-pressed) cmd notify)))))
 
 (defn go [on-tick-observer on-end-observer initial-state]
   (gameloop/start (spawn initial-state) (on-tick-observable on-tick-observer on-end-observer)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; dev mode - cart can be controlled manually
+
+(defn on-tick [{keys-pressed :keys-pressed
+                {done :done} :observation
+                :as          state}]
+  (if done
+    (assoc state :cmd :reset)
+    (cond
+      (.contains keys-pressed \a)
+      (assoc state :cmd :left)
+      (.contains keys-pressed \d)
+      (assoc state :cmd :right))))
+
 (defn -main [& args]
-  (go (fn [{{done :done} :observation :as state}]
-        (if done
-          (assoc state :cmd :reset)
-          state)
-        ) identity {}))
+  (go on-tick identity {}))

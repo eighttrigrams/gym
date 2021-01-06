@@ -83,7 +83,8 @@
   (.getRotationAngle (.getTransform (id @bodies))))
 
 (defn get-linear-velocity [id]
-  (.x (.getLinearVelocity (id @bodies))))
+  [(.x (.getLinearVelocity (id @bodies)))
+   (.y (.getLinearVelocity (id @bodies)))])
 
 (defn get-position [id]
   [(.getTranslationX (.getTransform (id @bodies)))

@@ -55,9 +55,8 @@
           (assoc state :observation
                  [(- (first (get-position :cart)) 200.0)
                   (get-rotation :pole)
-                  ;; TODO rename or make it return both components
-                  (get-linear-velocity :cart)
-                  (get-linear-velocity :tip)])]
+                  (first (get-linear-velocity :cart))
+                  (first (get-linear-velocity :tip))])]
       (-> state
           (update :step inc)
           (cond-> (or (> (-> state :observation second) max-angle)

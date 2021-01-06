@@ -5,9 +5,9 @@
 
 (def MAX-ANGLE 0.20)
 
-(def CART-SPEED 25.75)
+(def CART-SPEED 22.75)
 
-(def MOTOR-FORCE 2000.0)
+(def MOTOR-FORCE 1500.0)
 
 (defn spawn [state]
   (create-body:rectangle [[0 104] [4 4]] :tip)

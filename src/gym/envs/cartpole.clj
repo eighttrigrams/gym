@@ -120,7 +120,9 @@
       (.contains keys-pressed \a)
       (assoc state :cmd :left)
       (.contains keys-pressed \d)
-      (assoc state :cmd :right))))
+      (assoc state :cmd :right)
+      :else
+      state)))
 
 (defn -main [& args]
   (go on-tick identity {}))

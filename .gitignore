@@ -1,2 +1,4 @@
 *.iml
 .cpcache
+.clj-kondo
+.lsp

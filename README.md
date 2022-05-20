@@ -1,5 +1,7 @@
 # Gym
      
+See also: [diffy](https://github.com/eighttrigrams/diffy)
+     
 AI Gym for Clojure
 
 Provides a classic CartPole like environment.
